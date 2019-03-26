@@ -23,14 +23,6 @@ def p_error(p):
     else:
         print("Unexpected end of input")
 
-
-# wyrazenia
-
-
-# inicjalizacje
-
-
-# instrukcje
 def p_start(p):
     """start : expression
              | blockOfExpressions
@@ -113,13 +105,6 @@ def p_singleIf(p):
     """singleIf : IF '(' condition ')' blockOfExpressions"""
 
 
-
-
-
-
-
-
-
 def p_for(p):
     """forConstr : FOR ID '=' var ':' var blockOfExpressions"""
 
@@ -138,13 +123,10 @@ def p_expressions(p):
                    | expression expressions"""
 
 
-# initialization
 def p_init_num_str(p):
     """initialization : ID '=' number ';'
                       | ID '=' STRING ';'"""
 
-
-# p[0] = p[1]
 
 
 def p_init_funct(p):
@@ -207,5 +189,4 @@ def p_empty(p):
 
 
 parser = yacc.yacc()
-
 
