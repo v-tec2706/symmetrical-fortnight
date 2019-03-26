@@ -32,6 +32,7 @@ def p_start(p):
 
 def p_expression(p):
     """expression : initialization
+                  | assign
                   | construction
                   | simple_func
                   """
@@ -79,11 +80,6 @@ def p_construction(p):
 def p_whileConstr(p):
     """whileConstr : WHILE '(' condition ')' blockOfExpressions
     """
-
-
-
-
-
 
 def p_ifConstr(p):
      """ifConstr : singleIf
@@ -169,6 +165,12 @@ def p_operation(p):
                  | var '/' var
     """
 
+def p_unary_op(p):
+    """operation : '-' var
+                 | var "\'" """
+
+
+
 def p_dot_operation(p):
     """operation : var DOTADD var
                  | var DOTSUB var
@@ -182,6 +184,11 @@ def p_element(p):
                 | number
                 | empty"""
 
+def p_assign(p):
+    """assign : ID ADDASSIGN var ';'
+              | ID SUBASSIGN var ';'
+              | ID MULASSIGN var ';'
+              | ID DIVASSIGN var ';'"""
 
 def p_empty(p):
     'empty :'
