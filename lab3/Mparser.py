@@ -7,7 +7,7 @@ import AST
 tokens = scanner.tokens
 
 precedence = (
-    ('nonassoc', 'IF','WHILE','FOR'),
+    ('nonassoc', 'IFX'),
     ('nonassoc', 'ELSE'),
     ('right', '=', 'ADDASSIGN', 'SUBASSIGN', 'MULASSIGN', 'DIVASSIGN'),
     ('nonassoc', 'LEEQ', 'GREQ', 'NOTEQ', 'EQ'),
@@ -32,8 +32,6 @@ def p_start(p):
              | start blockOfExpressions
              """
 
-    # if len(p) == 2:
-    #     p[0] = p[1]
     if len(p) == 3:
         p[1].instrs.append(p[2])
         p[0] = p[1]
@@ -43,10 +41,25 @@ def p_start(p):
 
 def p_expression(p):
     """expression : initialization
-                  | construction
+                  | whileConstr
+                  | ifConstr
+                  | forConstr
                   | simple_func
                   | return
                   """
+    p[0] = p[1]
+
+def p_blockOfExpressions(p):
+    """blockOfExpressions : expression
+                          | '{' expressions '}'"""
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = p[2]
+
+def p_expressions(p):
+    """expressions : expression
+                   | expression expressions"""
     p[0] = p[1]
 
 
@@ -93,22 +106,6 @@ def p_condition(p):
     p[0] = AST.Condition(p[1], p[2], p[3])
 
 
-def p_construction(p):
-    """construction : ifConstr
-                    | ifConstr construction"""
-    p[0] = p[1]
-
-def p_while_construction(p):
-    """construction : whileConstr
-                    | whileConstr construction"""
-    p[0] = p[1]
-
-def p_for_construction(p):
-    """construction :  forConstr
-                    | forConstr construction
-                    """
-    p[0] = p[1]
-
 def p_whileConstr(p):
     """whileConstr : WHILE '(' condition ')' blockOfExpressions
     """
@@ -116,7 +113,7 @@ def p_whileConstr(p):
 
 
 def p_ifConstr(p):
-    """ifConstr : IF '(' condition ')' blockOfExpressions
+    """ifConstr : IF '(' condition ')' blockOfExpressions %prec IFX
                 | IF '(' condition ')' blockOfExpressions ELSE blockOfExpressions
                 | ELSE blockOfExpressions
          """
@@ -136,21 +133,6 @@ def p_var(p):
            | ID"""
 
     p[0] = AST.Var(p[1])
-
-
-def p_blockOfExpressions(p):
-    """blockOfExpressions : expression
-                          | '{' expressions '}'"""
-    if len(p) == 2:
-        p[0] = p[1]
-    else:
-       # p[0] = AST.Bracket(p[1], p[2], p[3])
-        p[0] = p[2]
-
-def p_expressions(p):
-    """expressions : expression
-                   | expression expressions"""
-    p[0] = p[1]
 
 
 def p_init_num_str(p):
@@ -230,7 +212,6 @@ def p_operation(p):
                  | exp "\'"
 
     """
-
 
     if len(p) == 4:
         p[0] = AST.TwoVarOperation(p[1], p[2], p[3])
