@@ -65,6 +65,9 @@ class TypeChecker(NodeVisitor):
         self.loop_number += 1
         self.visit(node.expr)
         self.loop_number -= 1
+        if node.rangeFrom > node.rangeTo:
+            print("improper range!")
+
 
     def visit_SimpleFun(self, node):
         if self.loop_number <= 0:
@@ -86,7 +89,7 @@ class TypeChecker(NodeVisitor):
             self.vector_len = len(node.elements)
         else:
             if len(node.elements) != self.vector_len:
-                print("Vector sizes must be equal!")
+                print("vectors sizes must be equal!")
 
     def visit_ExactPos(self, node):
         if node._id not in self.matrix_vector_len.keys():
@@ -145,7 +148,7 @@ class TypeChecker(NodeVisitor):
                 print("dot operation requires matrix arguments! ")
 
         if self.matrix_vector_len.get(node.var1.val) != self.matrix_vector_len.get(node.var2.val):
-            print("vectors length must match! ")
+            print("vectors lengths must match! ")
         if self.matrix_vector_num.get(node.var1.val) != self.matrix_vector_num.get(node.var2.val):
             print("number of nested vectors must match! ")
 
